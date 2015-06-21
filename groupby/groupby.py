@@ -13,62 +13,65 @@ except ImportError as e:
            'Some functions may not work correctly!'))
 
 
-def since_last(index, freq='1h', unit=None):
-    index = pd.DatetimeIndex(index)
-    freq = pd.Timedelta(freq)
-    freq_float = float(freq.value)
-    index_i8 = index.asi8
-    out = pd.to_timedelta(index_i8 - np.floor(index_i8/freq_float)*freq_float)
+def since_last(index, freq='H', unit=None, ambiguous='infer'):
+    """returns an index indicating the time since the last occurrence of a
+    frequency.
+
+    Parameters
+    ----------
+    index : `pandas.DatetimeIndex`
+    freq : `str`
+        passed to `pandas.DatetimeIndex.to_period`
+    unit : `pandas.Timedelta`
+        If given, returns the output Index as a float index instead by dividing
+        the timedelta index by the unit given.
+    ambiguous : `str`
+        passed to `pandas.DatetimeIndex.tz_localize`
+
+    Returns
+    -------
+    `pandas.DatetimeIndex`
+
+    """
+
+    since = index.to_period(freq).to_timestamp(how='s')
+    if index.tz:
+        since = since.tz_localize(index.tz, ambiguous=ambiguous)
+    out = pd.TimedeltaIndex(index.values - since.values)
     if unit:
         unit = pd.Timedelta(unit)
         out = (out/unit)
     return out
 
-# def get_timedelta_formatter(timedelta_index, format_str):
-#     def format_index(i, pos):
-#         return(i*pd.Timedelta(unit))
-
-#     return mpl.ticker.FuncFormatter(format_index)
 
 def plot_timedelta(df, *args, **kwargs):
     timedelta_index = df.index
     ax = df.reset_index().plot(*args, **kwargs)
 
     def format_index(i, pos):
-        return(str(timedelta_index[i]))
+        try:
+            return(str(timedelta_index[i]))
+        except IndexError:
+            return ''
     formatter = mpl.ticker.FuncFormatter(format_index)
     ax.xaxis.set_major_formatter(formatter)
 
 
 def groupby_times(df, kind, unit=None):
-    if True: #unit is not None:
-        key_dict = {
-            'weekly':since_last(df.index, '7D', unit),
-            'daily':since_last(df.index, '1D', unit),
-            'hourly':since_last(df.index, '1h', unit),
-            'minutely':since_last(df.index, '1m', unit),
-            'secondly':since_last(df.index, '1s', unit),
-            'all':None
-        }
-        if kind not in key_dict:
-            group_key = since_last(df.index, kind, unit)
-        else:
-            group_key = key_dict[kind]
+    key_dict = {
+        'monthly':since_last(df.index,'M',unit),
+        'weekly':since_last(df.index,'w', unit),
+        'daily':since_last(df.index, 'd', unit),
+        'hourly':since_last(df.index, 'h', unit),
+        'minutely':since_last(df.index, 'm', unit),
+        'secondly':since_last(df.index, 's', unit),
+        'all':None
+    }
+    if kind not in key_dict:
+        raise NotImplementedError('key must be something else')
+        # group_key = since_last(df.index, kind, unit)
     else:
-        key_dict = {
-            'yearly':(df.year, df.index.day, df.index.time),
-            'monthly':(df.index.day, df.index.time),
-            'weekly':(df.index.weekday, df.index.time),
-            'daily':df.index.time,
-            'hourly':since_last(df.index, '1h', '1m'),
-            'minutely':since_last(df.index, '1m', '1s'),
-            'secondly':since_last(df.index, '1s', '1ms'),
-            'all':None
-        }
-        if kind not in key_dict:
-            group_key = since_last(df.index, kind, '1s')
-        else:
-            group_key = key_dict[kind]
+        group_key = key_dict[kind]
     grouped = df.groupby(group_key)
     return grouped
 
