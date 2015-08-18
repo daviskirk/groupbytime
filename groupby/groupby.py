@@ -6,6 +6,7 @@ Groupby handles.
 
 import pandas as pd
 import numpy as np
+
 try:
     import matplotlib as mpl
 except ImportError as e:
@@ -58,20 +59,45 @@ def plot_timedelta(df, *args, **kwargs):
 
 
 def groupby_times(df, kind, unit=None):
+    """Groupby specific times
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame with `pandas.TimedeltaIndex` as index.
+    kind : {'monthly', 'weekly', 'daily', 'hourly', 'minutely', 'all'}
+        How to group `df`.
+    unit : str (optional)
+        What unit to use
+
+    Returns
+    -------
+    Grouped
+
+    """
+
+    def tmp_since_last(freq):
+        if freq:
+            return since_last(df.index, freq, unit)
+        else:
+            return None
+
     key_dict = {
-        'monthly':since_last(df.index,'M',unit),
-        'weekly':since_last(df.index,'w', unit),
-        'daily':since_last(df.index, 'd', unit),
-        'hourly':since_last(df.index, 'h', unit),
-        'minutely':since_last(df.index, 'm', unit),
-        'secondly':since_last(df.index, 's', unit),
-        'all':None
+        'monthly': 'M',
+        'weekly': 'w',
+        'daily': 'd',
+        'hourly': 'h',
+        'minutely': 'm',
+        'secondly': 's',
+        'all': None
     }
+    # key_dict.update({v:v for v in key_dict.values()})
+
     if kind not in key_dict:
         raise NotImplementedError('key must be something else')
         # group_key = since_last(df.index, kind, unit)
     else:
-        group_key = key_dict[kind]
+        group_key = tmp_since_last(key_dict[kind])
     grouped = df.groupby(group_key)
     return grouped
 
@@ -79,6 +105,7 @@ def groupby_times(df, kind, unit=None):
 def demo():
     pd.date_range('2015-1-1 00:00', '2016-1-1 00:00', freq='1m')
     np.sin()
+
 
 if __name__ == '__main__':
     sys.exit()
