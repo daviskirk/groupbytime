@@ -9,9 +9,9 @@ Convenience functions for grouping datetimes in [pandas](http://www.github.com/p
 
 ## Examples
 ```python
-import groupby
+import groupbytime
 import matplotlib.pyplot as plt
-grouped = groupby.groupby_times(df, 'weekly')
+grouped = groupbytime.groupby_times(df, 'weekly')
 weekly_mean = grouped.mean()
 
 # plotting timedeltas doesn't really work in pandas so this helps

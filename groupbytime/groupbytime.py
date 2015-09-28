@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-"""
-Groupby handles.
+"""groupbytime assists pandas grouping by providing an easier to grouping
+DataFrames and Series by timedeltas and periods.
+
 """
 
 import pandas as pd
