@@ -1,0 +1,34 @@
+package:
+  name: groupbytime
+  version: "0.1"
+
+source:
+  url: https://github.com/daviskirk/groupbytime.git
+#  patches:
+   # List any patch files here
+   # - fix.patch
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy
+    - pandas
+  run:
+    - python
+    - setuptools
+    - numpy
+    - pandas
+test:
+  # Python imports
+  imports:
+    - groupbytime
+
+about:
+  home: https://github.com/daviskirk/groupbytime
+  license: MIT License
+  summary: 'Convenience functions for grouping datetimes in pandas.'
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml
