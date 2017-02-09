@@ -6,7 +6,6 @@ DataFrames and Series by timedeltas and periods.
 """
 
 import pandas as pd
-import numpy as np
 
 try:
     import matplotlib as mpl
@@ -99,8 +98,3 @@ def groupby_times(df, kind, unit=None):
         group_key = tmp_since_last(key_dict[kind])
     grouped = df.groupby(group_key)
     return grouped
-
-
-def demo():
-    pd.date_range('2015-1-1 00:00', '2016-1-1 00:00', freq='1m')
-    np.sin()

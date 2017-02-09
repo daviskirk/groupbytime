@@ -1,0 +1,4 @@
+name: groupbytime
+dependencies:
+  - python=3.5
+  - pandas

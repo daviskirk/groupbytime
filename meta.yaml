@@ -1,6 +1,6 @@
 package:
   name: groupbytime
-  version: "0.1"
+  version: "0.3"
 
 source:
   url: https://github.com/daviskirk/groupbytime.git
@@ -12,12 +12,10 @@ requirements:
   build:
     - python
     - setuptools
-    - numpy
     - pandas
   run:
     - python
     - setuptools
-    - numpy
     - pandas
 test:
   # Python imports
