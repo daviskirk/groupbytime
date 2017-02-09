@@ -37,9 +37,7 @@ def since_last(index, freq='H', unit=None, ambiguous='infer'):
     """
 
     since = index.to_period(freq).to_timestamp(how='s')
-    if index.tz:
-        since = since.tz_localize(index.tz, ambiguous=ambiguous)
-    out = pd.TimedeltaIndex(index.values - since.values)
+    out = pd.TimedeltaIndex(index.tz_localize(None).values - since.values)
     if unit:
         unit = pd.Timedelta(unit)
         out = (out/unit)
@@ -106,7 +104,3 @@ def groupby_times(df, kind, unit=None):
 def demo():
     pd.date_range('2015-1-1 00:00', '2016-1-1 00:00', freq='1m')
     np.sin()
-
-
-if __name__ == '__main__':
-    sys.exit()
