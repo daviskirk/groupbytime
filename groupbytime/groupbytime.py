@@ -10,8 +10,7 @@ import pandas as pd
 try:
     import matplotlib as mpl
 except ImportError as e:
-    print(('matplotlib could not be imported. '
-           'Some functions may not work correctly!'))
+    mpl = None
 
 
 def since_last(index, freq='H', unit=None, ambiguous='infer'):
@@ -44,6 +43,8 @@ def since_last(index, freq='H', unit=None, ambiguous='infer'):
 
 
 def plot_timedelta(df, *args, **kwargs):
+    if mpl is None:
+        raise ImportError('matplotlib is needed for "plot_timedelta"')
     timedelta_index = df.index
     ax = df.reset_index().plot(*args, **kwargs)
 
